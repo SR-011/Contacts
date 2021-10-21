@@ -79,6 +79,16 @@ class ContactAdapter : RecyclerView.Adapter<ContactAdapter.MyViewHolder>(), Filt
         notifyDataSetChanged()
     }
 
+    fun getNumbers(): List<String>{
+        var list = ArrayList<String>()
+        var i = 0
+        for (item in names) {
+            list += item.numbers[i]
+            i++
+        }
+        return list
+    }
+
     override fun getFilter(): Filter {
         return object : Filter() {
             override fun performFiltering(charSequence: CharSequence?): FilterResults {
@@ -92,7 +102,7 @@ class ContactAdapter : RecyclerView.Adapter<ContactAdapter.MyViewHolder>(), Filt
                     var count = 0
                     for (item in names) {
                         if (item.name.lowercase().contains(filterPattern) ||
-                            item.numbers.get(0).contains(charSequence.toString())
+                            item.numbers[0].contains(charSequence.toString())
                         ) {
                             searchResultList.add(item)
                             Log.d("Sohel", "performFiltering:$item ")

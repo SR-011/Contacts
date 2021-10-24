@@ -1,10 +1,15 @@
 package com.practice.contacts.data
 
 data class Contacts(
-    val id: String,
-    val name: String
+    var id: String,
+    var name: String,
+    var numbers: MutableList<String>,
+    var emails: MutableList<String>
 ) {
-    var numbers = ArrayList<String>()
-    var emails = ArrayList<String>()
-
+    constructor() : this(
+        id = "",
+        name = "",
+        numbers = mutableListOf(),
+        emails = mutableListOf()
+    )
 }

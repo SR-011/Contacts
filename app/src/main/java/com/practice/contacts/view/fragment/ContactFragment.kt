@@ -37,8 +37,24 @@ class ContactFragment : Fragment() {
         checkPermission()
         setupObserver()
         setupUI()
+        //search()
         return binding.root
     }
+
+    /*private fun search() {
+        binding.etSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+
+            override fun onQueryTextSubmit(p0: String?): Boolean {
+                return false
+            }
+
+            override fun onQueryTextChange(text: String?): Boolean {
+                contactAdapter.filter.filter(text)
+                return false
+            }
+
+        })
+    }*/
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_search, menu)

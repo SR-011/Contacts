@@ -63,7 +63,7 @@ class ContactsViewModel(private val mApplication: Application) : AndroidViewMode
                 val id = contactsCursor.getString(idIndex)
                 val name = contactsCursor.getString(nameIndex)
                 if (name != null) {
-                    contactsList.add(Contacts(id,name))
+                    contactsList.add(Contacts(id,name, numbers = mutableListOf(),emails = mutableListOf()))
                 }
             }
             contactsCursor.close()

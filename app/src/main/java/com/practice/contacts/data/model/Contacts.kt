@@ -6,4 +6,5 @@ data class Contacts(
 ) {
     var numbers = ArrayList<String>()
     var emails = ArrayList<String>()
+
 }

@@ -12,8 +12,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.practice.contacts.R
 import com.practice.contacts.data.Contacts
 import com.practice.contacts.databinding.ContactRowBinding
-import java.time.Duration
-import java.util.*
 import kotlin.collections.ArrayList
 
 class ContactAdapter : RecyclerView.Adapter<ContactAdapter.MyViewHolder>(), Filterable {
@@ -48,13 +46,11 @@ class ContactAdapter : RecyclerView.Adapter<ContactAdapter.MyViewHolder>(), Filt
         holder.header.text = contact.substring(0, 1)
         holder.item.text = contact
 
-        if (position > 0 && filteredList[position - 1].name.substring(0, 1) == contact.substring(
-                0,
-                1
-            )
-        ) {
+        if ((position > 0 && filteredList[position - 1].name.substring(0, 1) == contact.substring(0, 1)))
+        {
             holder.header.visibility = View.GONE
-        } else {
+        }
+        else {
             holder.header.visibility = View.VISIBLE
         }
 
@@ -82,26 +78,22 @@ class ContactAdapter : RecyclerView.Adapter<ContactAdapter.MyViewHolder>(), Filt
     override fun getFilter(): Filter {
         return object : Filter() {
             override fun performFiltering(charSequence: CharSequence?): FilterResults {
-                val list =  ArrayList<String>()
                 val searchResultList = ArrayList<Contacts>()
                 if (charSequence.toString().isEmpty()) {
                     searchResultList.addAll(names)
                 } else {
                     val filterPattern = charSequence.toString().lowercase().trim()
-                    Log.d("Sohel", "performFiltering: ${names.size}")
-                    var count = 0
+                    Log.d("Sohel", "performFiltering Size: ${names.size}")
                     for (item in names) {
                         if (item.name.lowercase().contains(filterPattern) ||
-                            item.numbers[0].contains(charSequence.toString())
+                            (item.numbers.isNotEmpty() && item.numbers[0].contains(charSequence.toString().trim()))
                         ) {
+                            Log.d("Sohel", "performFilteringWithNumber: ${item.numbers}")
                             searchResultList.add(item)
-                            Log.d("Sohel", "performFiltering:$item ")
-                            count++
-                            Log.d("Sohel", "Counter:$count ")
+                            Log.d("Sohel", "performFiltering Item:$item ")
                         }
                     }
                 }
-                // didn't get value of these logs
                 Log.d("Sohel", "performFiltering:${searchResultList.size} ")
                 Log.d("Sohel", "performFiltering:$searchResultList ")
                 val filterResult = FilterResults()

@@ -1,26 +1,30 @@
 package com.practice.contacts.viewmodel
 
 import android.app.Application
-import android.content.ContentResolver
 import android.database.Cursor
 import android.provider.ContactsContract
 import android.util.Log
-import androidx.lifecycle.*
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import com.practice.contacts.data.Contacts
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
+import kotlin.collections.arrayListOf
+import kotlin.collections.forEach
+import kotlin.collections.set
 
 
-class ContactsViewModel(val mApplication: Application) : AndroidViewModel(mApplication) {
+class ContactsViewModel(private val mApplication: Application) : AndroidViewModel(mApplication) {
 
     private val _contactsLiveData = MutableLiveData<ArrayList<Contacts>>()
     val contactsLiveData:LiveData<ArrayList<Contacts>> = _contactsLiveData
 
     fun fetchContacts() {
-        Log.d("Sohel", "fetchContactsCa: ")
         viewModelScope.launch {
-            /*val contacts =  getPhoneContacts()
-            _contactsLiveData.postValue(contacts)*/
             val contactsListAsync = async { getPhoneContacts() }
             val contactNumbersAsync = async { getContactNumbers() }
             val contactEmailAsync = async { getContactEmails() }
@@ -51,7 +55,7 @@ class ContactsViewModel(val mApplication: Application) : AndroidViewModel(mAppli
             null,
             null,
             null,
-            ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC")
+            ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC") //COLLATE NOCASE ASC
         if (contactsCursor != null && contactsCursor.count > 0) {
             val idIndex = contactsCursor.getColumnIndex(ContactsContract.Contacts._ID)
             val nameIndex = contactsCursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME)

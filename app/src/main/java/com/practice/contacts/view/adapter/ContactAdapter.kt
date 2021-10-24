@@ -16,8 +16,8 @@ import kotlin.collections.ArrayList
 
 class ContactAdapter : RecyclerView.Adapter<ContactAdapter.MyViewHolder>(), Filterable {
 
-    var names: ArrayList<Contacts> = ArrayList()
-    var filteredList: ArrayList<Contacts> = ArrayList()
+    var contactList: ArrayList<Contacts> = ArrayList()
+    var filteredContactList: ArrayList<Contacts> = ArrayList()
 
     //var OnItemClick: ((Contacts) -> Unit)? = null
 
@@ -42,11 +42,11 @@ class ContactAdapter : RecyclerView.Adapter<ContactAdapter.MyViewHolder>(), Filt
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-        val contact = filteredList[position].name
+        val contact = filteredContactList[position].name
         holder.header.text = contact.substring(0, 1)
         holder.item.text = contact
 
-        if ((position > 0 && filteredList[position - 1].name.substring(0, 1) == contact.substring(0, 1)))
+        if ((position > 0 && filteredContactList[position - 1].name.substring(0, 1) == contact.substring(0, 1)))
         {
             holder.header.visibility = View.GONE
         }
@@ -67,11 +67,11 @@ class ContactAdapter : RecyclerView.Adapter<ContactAdapter.MyViewHolder>(), Filt
         // holder.bind(names[position])
     }
 
-    override fun getItemCount() = filteredList.size
+    override fun getItemCount() = filteredContactList.size
 
     fun addNames(names: List<Contacts>) {
-        this.names = names as ArrayList<Contacts>
-        filteredList = names
+        this.contactList = names as ArrayList<Contacts>
+        filteredContactList = names
         notifyDataSetChanged()
     }
 
@@ -80,17 +80,22 @@ class ContactAdapter : RecyclerView.Adapter<ContactAdapter.MyViewHolder>(), Filt
             override fun performFiltering(charSequence: CharSequence?): FilterResults {
                 val searchResultList = ArrayList<Contacts>()
                 if (charSequence.toString().isEmpty()) {
-                    searchResultList.addAll(names)
+                    searchResultList.addAll(contactList)
                 } else {
                     val filterPattern = charSequence.toString().lowercase().trim()
-                    Log.d("Sohel", "performFiltering Size: ${names.size}")
-                    for (item in names) {
-                        if (item.name.lowercase().contains(filterPattern) ||
-                            (item.numbers.isNotEmpty() && item.numbers[0].contains(charSequence.toString().trim()))
-                        ) {
-                            Log.d("Sohel", "performFilteringWithNumber: ${item.numbers}")
-                            searchResultList.add(item)
-                            Log.d("Sohel", "performFiltering Item:$item ")
+                    Log.d("Sohel", "performFiltering Size: ${contactList.size}")
+                    for (item in contactList) {
+                        val contactsSearchResult = item.name.lowercase().contains(filterPattern)
+                        val numberSearchResult = item.numbers.filter { number -> number.contains(filterPattern) }.toMutableList()
+                        if (numberSearchResult.size == 0 && contactsSearchResult) {
+                            searchResultList.add(Contacts(id = item.id, name = item.name, numbers = item.numbers, emails = item.emails))
+                        } else if (!contactsSearchResult && numberSearchResult.size > 0) {
+                            Log.d("Sohel", "numberSearchResult: ${numberSearchResult.size}")
+                            Log.d("Sohel", "numberSearchResult: $numberSearchResult")
+                            searchResultList.add(Contacts(id = item.id, name = item.name, numbers = numberSearchResult, emails = item.emails))
+                        }
+                        else{
+                            continue
                         }
                     }
                 }
@@ -103,7 +108,7 @@ class ContactAdapter : RecyclerView.Adapter<ContactAdapter.MyViewHolder>(), Filt
             }
 
             override fun publishResults(charSequence: CharSequence?, result: FilterResults?) {
-                filteredList = result?.values as ArrayList<Contacts>
+                filteredContactList = result?.values as ArrayList<Contacts>
                 notifyDataSetChanged()
             }
         }

@@ -16,7 +16,7 @@ import com.practice.contacts.databinding.FragmentContactBinding
 import com.practice.contacts.view.adapter.ContactAdapter
 import com.practice.contacts.viewmodel.ContactsViewModel
 import android.view.MenuInflater
-import com.practice.contacts.RecyclerItemDecoration
+import com.practice.contacts.utils.RecyclerItemDecoration
 
 
 class ContactFragment : Fragment() {

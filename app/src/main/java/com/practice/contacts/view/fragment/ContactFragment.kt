@@ -5,12 +5,10 @@ import android.os.Bundle
 import android.util.Log
 import android.view.*
 import androidx.appcompat.widget.SearchView
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.practice.contacts.R
 import com.practice.contacts.data.Contacts
@@ -18,7 +16,7 @@ import com.practice.contacts.databinding.FragmentContactBinding
 import com.practice.contacts.view.adapter.ContactAdapter
 import com.practice.contacts.viewmodel.ContactsViewModel
 import android.view.MenuInflater
-import android.view.View.OnFocusChangeListener
+import com.practice.contacts.RecyclerItemDecoration
 
 
 class ContactFragment : Fragment() {
@@ -27,6 +25,7 @@ class ContactFragment : Fragment() {
     private lateinit var contactAdapter: ContactAdapter
     private val contactViewModel: ContactsViewModel by viewModels()
     var contactList: ArrayList<Contacts> = ArrayList()
+    private lateinit var recyclerItemDecoration: RecyclerItemDecoration
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -37,24 +36,8 @@ class ContactFragment : Fragment() {
         checkPermission()
         setupObserver()
         setupUI()
-        //search()
         return binding.root
     }
-
-    /*private fun search() {
-        binding.etSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-
-            override fun onQueryTextSubmit(p0: String?): Boolean {
-                return false
-            }
-
-            override fun onQueryTextChange(text: String?): Boolean {
-                contactAdapter.filter.filter(text)
-                return false
-            }
-
-        })
-    }*/
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_search, menu)
@@ -80,6 +63,7 @@ class ContactFragment : Fragment() {
             contactList = it
             Log.d("Sohel", "setupObserver: $contactList")
             contactAdapter.addNames(contactList)
+            decorateSectionRow()
         })
     }
 
@@ -115,5 +99,29 @@ class ContactFragment : Fragment() {
         layoutManager.orientation = LinearLayoutManager.VERTICAL
         binding.contactRecycler.layoutManager = layoutManager
         binding.contactRecycler.adapter = contactAdapter
+    }
+
+    private fun decorateSectionRow(){
+        recyclerItemDecoration = RecyclerItemDecoration(
+            resources.getDimensionPixelSize(R.dimen.recycler_section_header_height),
+            true,
+            getSectionCallback(contactList)
+        )
+        Log.d("Sohel", "setupObserver2: $contactList")
+        binding.contactRecycler.addItemDecoration(recyclerItemDecoration)
+    }
+
+    private fun getSectionCallback(contact: List<Contacts>): RecyclerItemDecoration.SectionCallBack {
+        return object : RecyclerItemDecoration.SectionCallBack {
+            override fun isSection(pos: Int): Boolean {
+                return (pos == 0 || contact[pos].name[0] != contact[pos-1].name[0])
+            }
+
+            override fun getSectionHeader(position: Int): CharSequence {
+                return contact[position].name.subSequence(0,1)
+            }
+
+        }
+
     }
 }
